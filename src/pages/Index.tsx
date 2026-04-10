@@ -4,6 +4,7 @@ import Footer from "@/components/assessment/Footer";
 import StepIndicator from "@/components/assessment/StepIndicator";
 import ScoreResult from "@/components/assessment/ScoreResult";
 import { SECTION_LABELS, INITIAL_ORG_PROFILE, OrgProfile } from "@/components/assessment/AssessmentData";
+import { calculateScoring } from "@/components/assessment/ScoringLogic";
 import Step1OrgProfile from "@/components/assessment/steps/Step1OrgProfile";
 import Step2Culture1, { validateStep2 } from "@/components/assessment/steps/Step2Culture1";
 import Step3Culture2, { validateStep3 } from "@/components/assessment/steps/Step3Culture2";
