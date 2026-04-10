@@ -67,7 +67,7 @@ const Index = () => {
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1 py-4 sm:py-6 md:py-8">
-          <ScoreResult score={calculateScore()} />
+          <ScoreResult result={scoringResult} companyName={orgData.companyName} />
         </main>
         <Footer />
       </div>
