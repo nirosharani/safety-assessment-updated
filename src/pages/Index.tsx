@@ -24,21 +24,7 @@ const Index = () => {
   const [stepData, setStepData] = useState<Record<string, string>>({});
   const [showErrors, setShowErrors] = useState(false);
 
-  const calculateScore = () => {
-    const ratings = Object.keys(stepData)
-      .filter((k) => k.startsWith("s2_q") || k.startsWith("s3_q"))
-      .map((k) => parseInt(stepData[k] || "0", 10))
-      .filter((v) => v > 0);
-
-    const otherCount = Object.keys(stepData)
-      .filter((k) => !k.startsWith("s2_q") && !k.startsWith("s3_q"))
-      .filter((k) => stepData[k]?.trim()).length;
-
-    if (ratings.length === 0 && otherCount === 0) return 50;
-    const ratingScore = ratings.length > 0 ? ((ratings.reduce((a, b) => a + b, 0) / ratings.length) - 1) * 25 : 50;
-    const otherScore = Math.min((otherCount / 10) * 20, 20);
-    return Math.round(Math.min(ratingScore + otherScore, 100));
-  };
+  const scoringResult = calculateScoring(stepData);
 
   const validateCurrentStep = (): boolean => {
     switch (step) {
