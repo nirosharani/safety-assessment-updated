@@ -4,6 +4,7 @@ import Footer from "@/components/assessment/Footer";
 import StepIndicator from "@/components/assessment/StepIndicator";
 import ScoreResult from "@/components/assessment/ScoreResult";
 import { SECTION_LABELS, INITIAL_ORG_PROFILE, OrgProfile } from "@/components/assessment/AssessmentData";
+import { calculateScoring } from "@/components/assessment/ScoringLogic";
 import Step1OrgProfile from "@/components/assessment/steps/Step1OrgProfile";
 import Step2Culture1, { validateStep2 } from "@/components/assessment/steps/Step2Culture1";
 import Step3Culture2, { validateStep3 } from "@/components/assessment/steps/Step3Culture2";
@@ -23,21 +24,7 @@ const Index = () => {
   const [stepData, setStepData] = useState<Record<string, string>>({});
   const [showErrors, setShowErrors] = useState(false);
 
-  const calculateScore = () => {
-    const ratings = Object.keys(stepData)
-      .filter((k) => k.startsWith("s2_q") || k.startsWith("s3_q"))
-      .map((k) => parseInt(stepData[k] || "0", 10))
-      .filter((v) => v > 0);
-
-    const otherCount = Object.keys(stepData)
-      .filter((k) => !k.startsWith("s2_q") && !k.startsWith("s3_q"))
-      .filter((k) => stepData[k]?.trim()).length;
-
-    if (ratings.length === 0 && otherCount === 0) return 50;
-    const ratingScore = ratings.length > 0 ? ((ratings.reduce((a, b) => a + b, 0) / ratings.length) - 1) * 25 : 50;
-    const otherScore = Math.min((otherCount / 10) * 20, 20);
-    return Math.round(Math.min(ratingScore + otherScore, 100));
-  };
+  const scoringResult = calculateScoring(stepData);
 
   const validateCurrentStep = (): boolean => {
     switch (step) {
@@ -80,7 +67,7 @@ const Index = () => {
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1 py-4 sm:py-6 md:py-8">
-          <ScoreResult score={calculateScore()} />
+          <ScoreResult result={scoringResult} companyName={orgData.companyName} />
         </main>
         <Footer />
       </div>
