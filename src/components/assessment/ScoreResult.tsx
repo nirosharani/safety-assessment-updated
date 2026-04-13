@@ -4,7 +4,7 @@ import { ScoringResult } from "./ScoringLogic";
 const MATURITY_LEVELS = [
   { level: 1, label: "Lagging", range: "0–34", color: "#DC2626" },
   { level: 2, label: "Reactive", range: "35–54", color: "#DC2626" },
-  { level: 3, label: "Developing", range: "55–69", color: "#D97706" },
+  { level: 3, label: "Developing", range: "55–69", color: "#421072" },
   { level: 4, label: "Proactive", range: "70–84", color: "#0E8A7A" },
   { level: 5, label: "Optimising", range: "85–100", color: "#16A34A" },
 ];
@@ -18,7 +18,7 @@ const ScoreResult = ({ result, companyName }: Props) => {
   const ringColor =
     result.overall >= 85 ? "#16A34A" :
     result.overall >= 70 ? "#0E8A7A" :
-    result.overall >= 55 ? "#D97706" :
+    result.overall >= 55 ? "#421072" :
     result.overall >= 35 ? "#DC2626" : "#DC2626";
 
   return (
