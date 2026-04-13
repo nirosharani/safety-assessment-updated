@@ -12,16 +12,16 @@ const Step6Technology = ({ data, onChange, showErrors }: Props) => (
       label="Is AI currently used in any part of your safety process?"
       required
       options={["Yes, actively used", "Under pilot / testing", "Planned for future", "No"]}
-      value={data.s6_q0 || ""}
-      onChange={(v) => onChange("s6_q0", v)}
+      value={data.tech_ai_currently_used || ""}
+      onChange={(v) => onChange("tech_ai_currently_used", v)}
       showError={showErrors}
     />
     <RadioQuestion
       label="Are daily vehicle inspections incorporated?"
       required
       options={["Yes, mandatory and documented", "Yes, but informal", "Only for selected vehicles", "Planned but not implemented", "No", "Not Applicable"]}
-      value={data.s6_q1 || ""}
-      onChange={(v) => onChange("s6_q1", v)}
+      value={data.tech_vehicle_inspections || ""}
+      onChange={(v) => onChange("tech_vehicle_inspections", v)}
       showError={showErrors}
     />
   </div>
@@ -30,4 +30,4 @@ const Step6Technology = ({ data, onChange, showErrors }: Props) => (
 export default Step6Technology;
 
 export const validateStep6 = (data: Record<string, string>) =>
-  !!(data.s6_q0 && data.s6_q1);
+  !!(data.tech_ai_currently_used && data.tech_vehicle_inspections);

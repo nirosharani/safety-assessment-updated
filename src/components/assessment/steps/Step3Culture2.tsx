@@ -7,10 +7,10 @@ interface Props {
 }
 
 const QUESTIONS = [
-  "Safety procedures are followed even under operational pressure",
-  "Risks are assessed before non-routine or high-risk tasks",
-  "Safety performance is reviewed regularly using data",
-  "Employees actively participate in identifying hazards and unsafe conditions",
+  { key: "culture_procedures_followed_under_pressure", label: "Safety procedures are followed even under operational pressure" },
+  { key: "culture_risks_assessed_before_tasks", label: "Risks are assessed before non-routine or high-risk tasks" },
+  { key: "culture_safety_reviewed_with_data", label: "Safety performance is reviewed regularly using data" },
+  { key: "culture_employees_identify_hazards", label: "Employees actively participate in identifying hazards and unsafe conditions" },
 ];
 
 const Step3Culture2 = ({ data, onChange, showErrors }: Props) => (
@@ -18,12 +18,12 @@ const Step3Culture2 = ({ data, onChange, showErrors }: Props) => (
     <p className="text-sm text-muted-foreground mb-4">
       Rate each statement on a scale of 1 (Strongly Disagree) to 5 (Strongly Agree)
     </p>
-    {QUESTIONS.map((q, i) => (
+    {QUESTIONS.map((q) => (
       <RatingQuestion
-        key={i}
-        label={q}
-        value={data[`s3_q${i}`] || ""}
-        onChange={(v) => onChange(`s3_q${i}`, v)}
+        key={q.key}
+        label={q.label}
+        value={data[q.key] || ""}
+        onChange={(v) => onChange(q.key, v)}
         showError={showErrors}
       />
     ))}
@@ -33,4 +33,4 @@ const Step3Culture2 = ({ data, onChange, showErrors }: Props) => (
 export default Step3Culture2;
 
 export const validateStep3 = (data: Record<string, string>) =>
-  QUESTIONS.every((_, i) => !!data[`s3_q${i}`]);
+  QUESTIONS.every((q) => !!data[q.key]);

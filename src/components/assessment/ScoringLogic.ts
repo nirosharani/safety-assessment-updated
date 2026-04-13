@@ -1,5 +1,3 @@
-// Scoring logic per SafetyConnect Scoring Metrics doc v1.0
-
 export interface CategoryScore {
   name: string;
   earned: number;
@@ -17,37 +15,37 @@ export interface ScoringResult {
   categories: CategoryScore[];
 }
 
-const STEP4_Q0_POINTS: Record<string, number> = {
+const TRAINING_FREQUENCY_POINTS: Record<string, number> = {
   "Weekly": 5, "Monthly": 5, "Quarterly": 4, "Half-yearly": 3,
   "Annually": 2, "Only during induction": 1, "No regular training": 0,
 };
 
-const STEP4_Q1_POINTS: Record<string, number> = {
+const TRAINING_EFFECTIVENESS_POINTS: Record<string, number> = {
   "Post-training quiz or test": 2, "Supervisor observation": 2,
   "Incident / behaviour trend review": 2, "Employee feedback": 1,
   "Not formally evaluated": 0,
 };
 
-const STEP4_Q2_POINTS: Record<string, number> = {
+const TRAINING_MICROLEARNING_POINTS: Record<string, number> = {
   "Regularly": 5, "Occasionally": 3, "Planned but not implemented": 1, "Not used": 0,
 };
 
-const STEP4_Q3_POINTS: Record<string, number> = {
+const TRAINING_WHO_REPORTS_POINTS: Record<string, number> = {
   "Only safety team": 1, "Mostly supervisors / managers": 2,
   "All employees": 5, "Employees and contractors": 5, "Mostly management": 2,
 };
 
-const STEP5_Q1_POINTS: Record<string, number> = {
+const INCIDENT_KPIS_POINTS: Record<string, number> = {
   "Incident rates": 1, "Near-miss reporting": 1, "Training completion": 1,
   "Corrective action closure": 1, "Vehicle inspection compliance": 1,
   "Driver behaviour metrics": 1, "None formally tracked": 0,
 };
 
-const STEP6_Q0_POINTS: Record<string, number> = {
+const TECH_AI_POINTS: Record<string, number> = {
   "Yes, actively used": 5, "Under pilot / testing": 3, "Planned for future": 1, "No": 0,
 };
 
-const STEP6_Q1_POINTS: Record<string, number> = {
+const TECH_VEHICLE_POINTS: Record<string, number> = {
   "Yes, mandatory and documented": 5, "Yes, but informal": 3,
   "Only for selected vehicles": 2, "Planned but not implemented": 1, "No": 0, "Not Applicable": 0,
 };
@@ -72,46 +70,47 @@ function getMaturity(score: number): { level: number; label: string; description
 }
 
 export function calculateScoring(data: Record<string, string>): ScoringResult {
+
   // --- Safety Culture & Leadership (Steps 2 & 3): 8 Likert × 5 = 40 max ---
-  let cultureEarned = 0;
-  for (let i = 0; i < 4; i++) {
-    cultureEarned += parseInt(data[`s2_q${i}`] || "0", 10);
-  }
-  for (let i = 0; i < 4; i++) {
-    cultureEarned += parseInt(data[`s3_q${i}`] || "0", 10);
-  }
+  const cultureKeys = [
+    "culture_safety_prioritized_by_leadership",
+    "culture_employees_report_near_misses",
+    "culture_incidents_investigated",
+    "culture_learnings_shared",
+    "culture_procedures_followed_under_pressure",
+    "culture_risks_assessed_before_tasks",
+    "culture_safety_reviewed_with_data",
+    "culture_employees_identify_hazards",
+  ];
+  const cultureEarned = cultureKeys.reduce((sum, key) => sum + parseInt(data[key] || "0", 10), 0);
   const cultureMax = 40;
 
   // --- Training & Competency (Step 4): 20 max ---
-  const t_q0 = STEP4_Q0_POINTS[data.s4_q0] ?? 0;
-  const t_q1_vals = getCheckboxValues(data, "s4_q1");
-  const t_q1_raw = t_q1_vals.reduce((sum, v) => sum + (STEP4_Q1_POINTS[v] ?? 0), 0);
-  const t_q1 = Math.min(t_q1_raw, 5);
-  const t_q2 = STEP4_Q2_POINTS[data.s4_q2] ?? 0;
-  const t_q3 = STEP4_Q3_POINTS[data.s4_q3] ?? 0;
-  const trainingEarned = t_q0 + t_q1 + t_q2 + t_q3;
+  const t_freq = TRAINING_FREQUENCY_POINTS[data.training_frequency] ?? 0;
+  const t_eff_vals = getCheckboxValues(data, "training_effectiveness_methods");
+  const t_eff = Math.min(t_eff_vals.reduce((sum, v) => sum + (TRAINING_EFFECTIVENESS_POINTS[v] ?? 0), 0), 5);
+  const t_micro = TRAINING_MICROLEARNING_POINTS[data.training_microlearning_used] ?? 0;
+  const t_who = TRAINING_WHO_REPORTS_POINTS[data.training_who_reports_observations] ?? 0;
+  const trainingEarned = t_freq + t_eff + t_micro + t_who;
   const trainingMax = 20;
 
   // --- Incident Management (Step 5): 10 max ---
-  const i_q0_vals = getCheckboxValues(data, "s5_q0");
-  const i_q0 = i_q0_vals.includes("No incidents") && i_q0_vals.length === 1 ? 5 : 0;
-  const i_q1_vals = getCheckboxValues(data, "s5_q1");
-  const i_q1_raw = i_q1_vals.reduce((sum, v) => sum + (STEP5_Q1_POINTS[v] ?? 0), 0);
-  const i_q1 = Math.min(i_q1_raw, 5);
-  const incidentEarned = i_q0 + i_q1;
+  const inc_types = getCheckboxValues(data, "incident_types_last_12_months");
+  const inc_q0 = (inc_types.includes("No incidents") && inc_types.length === 1) ? 5 : 0;
+  const inc_kpi_vals = getCheckboxValues(data, "incident_kpis_tracked");
+  const inc_q1 = Math.min(inc_kpi_vals.reduce((sum, v) => sum + (INCIDENT_KPIS_POINTS[v] ?? 0), 0), 5);
+  const incidentEarned = inc_q0 + inc_q1;
   const incidentMax = 10;
 
   // --- Technology & AI (Step 6): 10 max ---
-  const tech_q0 = STEP6_Q0_POINTS[data.s6_q0] ?? 0;
-  const tech_q1 = STEP6_Q1_POINTS[data.s6_q1] ?? 0;
-  const techEarned = tech_q0 + tech_q1;
+  const tech_ai = TECH_AI_POINTS[data.tech_ai_currently_used] ?? 0;
+  const tech_veh = TECH_VEHICLE_POINTS[data.tech_vehicle_inspections] ?? 0;
+  const techEarned = tech_ai + tech_veh;
   const techMax = 10;
 
   // --- Overall ---
   const totalEarned = cultureEarned + trainingEarned + incidentEarned + techEarned;
-  const totalMax = 80;
-  const overall = Math.round((totalEarned / totalMax) * 100);
-
+  const overall = Math.round((totalEarned / 80) * 100);
   const maturity = getMaturity(overall);
 
   const buildCat = (name: string, earned: number, max: number): CategoryScore => {

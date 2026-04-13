@@ -55,8 +55,53 @@ const Index = () => {
   };
 
   const handleSubmit = () => {
-    setSubmitted(true);
-  };
+  console.log("Full Form Data:", {
+
+    section1_org_profile: {
+      companyName: orgData.companyName,
+      industry: orgData.industry,
+      employees: orgData.employees,
+      sites: orgData.sites,
+      designation: orgData.designation,
+      vehicles: orgData.vehicles,
+    },
+
+    section2_3_culture_leadership: {
+      safety_prioritized_by_leadership: stepData.culture_safety_prioritized_by_leadership,
+      employees_report_near_misses: stepData.culture_employees_report_near_misses,
+      incidents_investigated: stepData.culture_incidents_investigated,
+      learnings_shared: stepData.culture_learnings_shared,
+      procedures_followed_under_pressure: stepData.culture_procedures_followed_under_pressure,
+      risks_assessed_before_tasks: stepData.culture_risks_assessed_before_tasks,
+      safety_reviewed_with_data: stepData.culture_safety_reviewed_with_data,
+      employees_identify_hazards: stepData.culture_employees_identify_hazards,
+    },
+
+    section4_training_competency: {
+      frequency: stepData.training_frequency,
+      effectiveness_methods: (stepData.training_effectiveness_methods || "").split("|||").filter(Boolean),
+      microlearning_used: stepData.training_microlearning_used,
+      who_reports_observations: stepData.training_who_reports_observations,
+    },
+
+    section5_incident_management: {
+      types_last_12_months: (stepData.incident_types_last_12_months || "").split("|||").filter(Boolean),
+      kpis_tracked: (stepData.incident_kpis_tracked || "").split("|||").filter(Boolean),
+    },
+
+    section6_technology_ai: {
+      ai_currently_used: stepData.tech_ai_currently_used,
+      vehicle_inspections: stepData.tech_vehicle_inspections,
+    },
+
+    section7_open_inputs: {
+      top_safety_challenges: stepData.open_top_safety_challenges,
+      safety_improvement_priority: (stepData.open_safety_improvement_priority || "").split("|||").filter(Boolean),
+    },
+
+  });
+  setSubmitted(true);
+};
 
   const handleStepDataChange = (key: string, val: string) => {
     setStepData((prev) => ({ ...prev, [key]: val }));

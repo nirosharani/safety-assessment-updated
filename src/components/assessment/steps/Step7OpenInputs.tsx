@@ -15,19 +15,19 @@ const Step7OpenInputs = ({ data, onChange, showErrors }: Props) => (
       </p>
       <textarea
         placeholder="Your answer"
-        value={data.s7_q0 || ""}
-        onChange={(e) => onChange("s7_q0", e.target.value)}
+        value={data.open_top_safety_challenges || ""}
+        onChange={(e) => onChange("open_top_safety_challenges", e.target.value)}
         className="w-full border border-input rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring min-h-[100px]"
       />
-      {showErrors && !(data.s7_q0 || "").trim() && (
+      {showErrors && !(data.open_top_safety_challenges || "").trim() && (
         <p className="text-destructive text-xs">This field is required</p>
       )}
     </div>
     <CheckboxQuestion
       label="What safety improvement area is your organization prioritizing most this year?"
       options={["Training and competency", "Incident reduction", "Behaviour-based safety", "Corrective action closure", "Digitalization / dashboards", "AI-based safety improvement", "Driver / vehicle safety"]}
-      values={(data.s7_q1 || "").split("|||").filter(Boolean)}
-      onChange={(v) => onChange("s7_q1", v.join("|||"))}
+      values={(data.open_safety_improvement_priority || "").split("|||").filter(Boolean)}
+      onChange={(v) => onChange("open_safety_improvement_priority", v.join("|||"))}
       showError={showErrors}
     />
   </div>
@@ -36,5 +36,5 @@ const Step7OpenInputs = ({ data, onChange, showErrors }: Props) => (
 export default Step7OpenInputs;
 
 export const validateStep7 = (data: Record<string, string>) =>
-  !!(data.s7_q0 || "").trim() &&
-  (data.s7_q1 || "").split("|||").filter(Boolean).length > 0;
+  !!(data.open_top_safety_challenges || "").trim() &&
+  (data.open_safety_improvement_priority || "").split("|||").filter(Boolean).length > 0;

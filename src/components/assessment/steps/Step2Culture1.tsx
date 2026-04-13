@@ -7,10 +7,10 @@ interface Props {
 }
 
 const QUESTIONS = [
-  "Safety is visibly prioritized by leadership",
-  "Employees feel safe reporting near-misses",
-  "Incidents are investigated beyond surface causes",
-  "Learnings from incidents are shared across teams",
+  { key: "culture_safety_prioritized_by_leadership", label: "Safety is visibly prioritized by leadership" },
+  { key: "culture_employees_report_near_misses", label: "Employees feel safe reporting near-misses" },
+  { key: "culture_incidents_investigated", label: "Incidents are investigated beyond surface causes" },
+  { key: "culture_learnings_shared", label: "Learnings from incidents are shared across teams" },
 ];
 
 const Step2Culture1 = ({ data, onChange, showErrors }: Props) => (
@@ -18,12 +18,12 @@ const Step2Culture1 = ({ data, onChange, showErrors }: Props) => (
     <p className="text-sm text-muted-foreground mb-4">
       Rate each statement on a scale of 1 (Strongly Disagree) to 5 (Strongly Agree)
     </p>
-    {QUESTIONS.map((q, i) => (
+    {QUESTIONS.map((q) => (
       <RatingQuestion
-        key={i}
-        label={q}
-        value={data[`s2_q${i}`] || ""}
-        onChange={(v) => onChange(`s2_q${i}`, v)}
+        key={q.key}
+        label={q.label}
+        value={data[q.key] || ""}
+        onChange={(v) => onChange(q.key, v)}
         showError={showErrors}
       />
     ))}
@@ -33,4 +33,4 @@ const Step2Culture1 = ({ data, onChange, showErrors }: Props) => (
 export default Step2Culture1;
 
 export const validateStep2 = (data: Record<string, string>) =>
-  QUESTIONS.every((_, i) => !!data[`s2_q${i}`]);
+  QUESTIONS.every((q) => !!data[q.key]);
