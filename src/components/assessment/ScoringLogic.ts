@@ -94,7 +94,7 @@ export function calculateScoring(data: Record<string, string>): ScoringResult {
 
   // --- Incident Management (Step 5): 10 max ---
   const i_q0_vals = getCheckboxValues(data, "s5_q0");
-  const i_q0 = i_q0_vals.includes("No incidents") ? 5 : 0;
+  const i_q0 = i_q0_vals.includes("No incidents") && i_q0_vals.length === 1 ? 5 : 0;
   const i_q1_vals = getCheckboxValues(data, "s5_q1");
   const i_q1_raw = i_q1_vals.reduce((sum, v) => sum + (STEP5_Q1_POINTS[v] ?? 0), 0);
   const i_q1 = Math.min(i_q1_raw, 5);
