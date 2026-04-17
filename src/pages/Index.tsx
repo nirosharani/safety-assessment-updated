@@ -54,55 +54,88 @@ const Index = () => {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = () => {
-  console.log("Full Form Data:", {
+  const handleSubmit = async () => {
+  try {
+    const response = await fetch(import.meta.env.VITE_API_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    // No API key needed!
+  },
+      body: JSON.stringify({
 
-    section1_org_profile: {
-      companyName: orgData.companyName,
-      industry: orgData.industry,
-      employees: orgData.employees,
-      sites: orgData.sites,
-      designation: orgData.designation,
-      vehicles: orgData.vehicles,
-    },
+        // Section 1
+        section1_org_profile: {
+          companyName: orgData.companyName,
+          industry: orgData.industry,
+          employees: orgData.employees,
+          sites: orgData.sites,
+          designation: orgData.designation,
+          vehicles: orgData.vehicles,
+        },
 
-    section2_3_culture_leadership: {
-      safety_prioritized_by_leadership: stepData.culture_safety_prioritized_by_leadership,
-      employees_report_near_misses: stepData.culture_employees_report_near_misses,
-      incidents_investigated: stepData.culture_incidents_investigated,
-      learnings_shared: stepData.culture_learnings_shared,
-      procedures_followed_under_pressure: stepData.culture_procedures_followed_under_pressure,
-      risks_assessed_before_tasks: stepData.culture_risks_assessed_before_tasks,
-      safety_reviewed_with_data: stepData.culture_safety_reviewed_with_data,
-      employees_identify_hazards: stepData.culture_employees_identify_hazards,
-    },
+        // Sections 2-3
+        section2_3_culture_leadership: {
+          safety_prioritized_by_leadership: stepData.culture_safety_prioritized_by_leadership,
+          employees_report_near_misses: stepData.culture_employees_report_near_misses,
+          incidents_investigated: stepData.culture_incidents_investigated,
+          learnings_shared: stepData.culture_learnings_shared,
+          procedures_followed_under_pressure: stepData.culture_procedures_followed_under_pressure,
+          risks_assessed_before_tasks: stepData.culture_risks_assessed_before_tasks,
+          safety_reviewed_with_data: stepData.culture_safety_reviewed_with_data,
+          employees_identify_hazards: stepData.culture_employees_identify_hazards,
+        },
 
-    section4_training_competency: {
-      frequency: stepData.training_frequency,
-      effectiveness_methods: (stepData.training_effectiveness_methods || "").split("|||").filter(Boolean),
-      microlearning_used: stepData.training_microlearning_used,
-      who_reports_observations: stepData.training_who_reports_observations,
-    },
+        // Section 4
+        section4_training_competency: {
+          frequency: stepData.training_frequency,
+          effectiveness_methods: (stepData.training_effectiveness_methods || "").split("|||").filter(Boolean),
+          microlearning_used: stepData.training_microlearning_used,
+          who_reports_observations: stepData.training_who_reports_observations,
+        },
 
-    section5_incident_management: {
-      types_last_12_months: (stepData.incident_types_last_12_months || "").split("|||").filter(Boolean),
-      kpis_tracked: (stepData.incident_kpis_tracked || "").split("|||").filter(Boolean),
-    },
+        // Section 5
+        section5_incident_management: {
+          types_last_12_months: (stepData.incident_types_last_12_months || "").split("|||").filter(Boolean),
+          kpis_tracked: (stepData.incident_kpis_tracked || "").split("|||").filter(Boolean),
+        },
 
-    section6_technology_ai: {
-      ai_currently_used: stepData.tech_ai_currently_used,
-      vehicle_inspections: stepData.tech_vehicle_inspections,
-    },
+        // Section 6
+        section6_technology_ai: {
+          ai_currently_used: stepData.tech_ai_currently_used,
+          vehicle_inspections: stepData.tech_vehicle_inspections,
+        },
 
-    section7_open_inputs: {
-      top_safety_challenges: stepData.open_top_safety_challenges,
-      safety_improvement_priority: (stepData.open_safety_improvement_priority || "").split("|||").filter(Boolean),
-    },
+        // Section 7
+        section7_open_inputs: {
+          top_safety_challenges: stepData.open_top_safety_challenges,
+          safety_improvement_priority: (stepData.open_safety_improvement_priority || "").split("|||").filter(Boolean),
+        },
 
-  });
-  setSubmitted(true);
+        // Scoring Results
+        scoring_results: {
+          overall_score: scoringResult.overall,
+          maturity_level: scoringResult.maturityLevel,
+          maturity_label: scoringResult.maturityLabel,
+          categories: scoringResult.categories,
+        }
+
+      })
+    });
+
+    if (response.ok) {
+      console.log("Data sent successfully!");
+      setSubmitted(true); // show results page
+    } else {
+      console.error("API error:", response.status);
+      setSubmitted(true); // still show results even if API fails
+    }
+
+  } catch (error) {
+    console.error("Failed to connect:", error);
+    setSubmitted(true); // still show results even if API fails
+  }
 };
-
   const handleStepDataChange = (key: string, val: string) => {
     setStepData((prev) => ({ ...prev, [key]: val }));
   };
